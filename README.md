@@ -45,6 +45,9 @@ Referer: http://www.study.com/day02/01-login.html     //原始的url,不带锚�
 respone header 的cache-control，常见的设置是max-age public private no-cache no-store等
 
 如下图,
+```
+![Image text](https://github.com/shiqingyun1024/HTTP-summary/blob/main/images/6782944-2953183b0a2ab1dc.webp)
+```
 设置了cache-control:max-age=31536000,public,immutable
 max-age表示缓存的时间是31536000秒（1年），public表示可以被浏览器和代理服务器缓存，代理服务器一般可用nginx来做。immutable表示该资源永远不变，但是实际上该资源并不是永远不变，它这么设置的意思是为了让用户在刷新页面的时候不要去请求服务器！啥意思？就是说，如果你只设置了cahe-control:max-age=31536000,public  这属于强缓存，每次用户正常打开这个页面，浏览器会判断缓存是否过期，没有过期就从缓存中读取数据；但是有一些 "聪明" 的用户会点击浏览器左上角的刷新按钮去刷新页面，这时候就算资源没有过期（1年没这么快过），浏览器也会直接去请求服务器，这就是额外的请求消耗了，这时候就相当于是走协商缓存的流程了（下面会讲到）。如果cahe-control:max-age=315360000,public再加个immutable的话，就算用户刷新页面，浏览器也不会发起请求去服务，浏览器会直接从本地磁盘或者内存中读取缓存并返回200状态，看上图的红色框（from memory cache）。这是2015年facebook团队向制定 HTTP 标准的 IETF 工作组提到的建议：他们希望 HTTP 协议能给 Cache-Control 响应头增加一个属性字段表明该资源永不过期，浏览器就没必要再为这些资源发送条件请求了。
 ```
@@ -116,7 +119,9 @@ res.setHeader(etag: '5c20abbd-e2e8')
 res.setHeader('last-modified': Mon, 24 Dec 2018 09:49:49 GMT)
 
 2、nginx配置
-
+```
+![Image text](https://github.com/shiqingyun1024/HTTP-summary/blob/main/images/6782944-b8701adefe6341e0.png)
+```
 偶尔自己折腾一番非前端的东西时，若心中有数，自然不会手忙脚乱
 ```
 ### 怎么去用？
@@ -129,7 +134,7 @@ res.setHeader('last-modified': Mon, 24 Dec 2018 09:49:49 GMT)
 index.html文件采用协商缓存，理由就是要用户每次请求index.html不拿浏览器缓存，直接请求服务器，这样就保证资源更新了，用户能马上访问到新资源，如果服务端返回304，这时候再拿浏览器的缓存的index.html，切记不要设置强缓存！！！
 其他资源采用强缓存 + 协商缓存,理由就不多说了。
 ```
-![Image text](https://raw.githubusercontent.com/hongmaju/light7Local/master/img/productShow/20170518152848.png)
+![Image text](https://github.com/shiqingyun1024/HTTP-summary/blob/main/images/6782944-618911ae2fbba06c.png)
 ```
 参考文章：
 https://juejin.im/post/5c417993f265da61285a6075
