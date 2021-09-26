@@ -128,7 +128,9 @@ res.setHeader('last-modified': Mon, 24 Dec 2018 09:49:49 GMT)
 我的做法是：
 index.html文件采用协商缓存，理由就是要用户每次请求index.html不拿浏览器缓存，直接请求服务器，这样就保证资源更新了，用户能马上访问到新资源，如果服务端返回304，这时候再拿浏览器的缓存的index.html，切记不要设置强缓存！！！
 其他资源采用强缓存 + 协商缓存,理由就不多说了。
-
+```
+![Image text](https://raw.githubusercontent.com/hongmaju/light7Local/master/img/productShow/20170518152848.png)
+```
 参考文章：
 https://juejin.im/post/5c417993f265da61285a6075
 http://www.cnblogs.com/ziyunfei/p/5642796.html
