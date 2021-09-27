@@ -156,4 +156,17 @@ index.html文件采用协商缓存，理由就是要用户每次请求index.html
 https://juejin.im/post/5c417993f265da61285a6075
 http://www.cnblogs.com/ziyunfei/p/5642796.html
 ```
+### HTTP性能
+#### navigator.sendBeacon
+```
+大部分现代浏览器都支持 navigator.sendBeacon方法。这个方法可以用来发送一些统计和诊断的小量数据，特别适合上报统计的场景。
 
+数据可靠，浏览器关闭请求也照样能发
+异步执行，不会影响下一页面的加载
+API使用简单
+window.addEventListener('unload', logData, false);
+
+function logData() {
+    navigator.sendBeacon("/log", analyticsData);
+}
+```
