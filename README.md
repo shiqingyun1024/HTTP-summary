@@ -77,6 +77,9 @@ max-age表示缓存的时间是31536000秒（1年），public表示可以被浏�
 如果cahe-control:max-age=315360000,public再加个immutable的话，
 就算用户刷新页面，浏览器也不会发起请求去服务，浏览器会直接从本地磁盘或者内存中读取缓存并返回200状态，
 看上图的红色框（from memory cache）。
+From disk cache：从硬盘中读取。
+From memory cache：从内存中读取，速度最快。
+注：强缓存一般可在服务端通过设置 Cache-Control:max-age、Expires 等 ResponseHeader实现。
 这是2015年facebook团队向制定 HTTP 标准的 IETF 工作组提到的建议：
 他们希望 HTTP 协议能给 Cache-Control 响应头增加一个属性字段表明该资源永不过期，
 浏览器就没必要再为这些资源发送条件请求了。
