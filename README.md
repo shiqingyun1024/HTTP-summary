@@ -170,3 +170,20 @@ function logData() {
     navigator.sendBeacon("/log", analyticsData);
 }
 ```
+
+# 网络通信协议基础全解，计算机底层原理入门
+
+## OSI七层模型
+```
+# 分层思想
+- 将复杂的流程分解，复杂问题简单化
+- 更容易发现问题并针对性解决
+
+# OSI参考模型
+- 国际化标准化组织（International Standard Organization, ISO）于1984
+年颁布开放系统互连（Open System Interconnection，OSI）参考模型。
+
+- 它规定将网络分为七层，从下到上依次是：物理层、数据链路层、网络层、传输层、会话层、表示层和应用层
+
+```
+
