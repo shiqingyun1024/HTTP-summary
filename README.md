@@ -197,9 +197,9 @@ HTTP 的缓存机制，可以说这是前端工程师需要掌握的重要知识
 HTTP 缓存分为 2 种，一种是强缓存，另一种是协商缓存。主要作用是可以加快资源获取速度，提升用户体验，
 减少网络传输，缓解服务端的压力。这是缓存运作的一个整体流程图：
 ```
-```
+
 ![Image text](https://github.com/shiqingyun1024/HTTP-summary/blob/main/images/1.webp)
-```
+
 ### 强缓存
 ```
 不需要发送请求到服务端，直接读取浏览器本地缓存，在 Chrome 的 Network 中显示的 HTTP 状态码是 200 ，
