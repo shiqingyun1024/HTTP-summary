@@ -243,15 +243,67 @@ app.listen(3000);
 
 第一次加载，页面会向服务器请求数据，并在 Response Header 中添加 Cache-Control ，过期时间为 10 秒。
 ```
-```
+
 ![Image text](https://github.com/shiqingyun1024/HTTP-summary/blob/main/images/2.webp)
-```
+
 ```
 第二次加载，Date 头属性未更新，可以看到浏览器直接使用了强缓存，实际没有发送请求。
 ```
-```
+
 ![Image text](https://github.com/shiqingyun1024/HTTP-summary/blob/main/images/3.webp)
+
 ```
+过了 10 秒的超时时间之后，再次请求资源：
+```
+![Image text](https://github.com/shiqingyun1024/HTTP-summary/blob/main/images/4.webp)
+```
+当 Pragma 和 Cache-Control 同时存在的时候，Pragma 的优先级高于 Cache-Control。
+```
+![Image text](https://github.com/shiqingyun1024/HTTP-summary/blob/main/images/5.webp)
+
+### 协商缓存
+```
+当浏览器的强缓存失效的时候或者请求头中设置了不走强缓存，并且在请求头中设置了If-Modified-Since 或者 If-None-Match 的时候，
+会将这两个属性值到服务端去验证是否命中协商缓存，如果命中了协商缓存，会返回 304 状态，加载浏览器缓存，
+并且响应头会设置 Last-Modified 或者 ETag 属性。
+
+## ETag/If-None-Match
+ETag/If-None-Match 的值是一串 hash 码，代表的是一个资源的标识符，当服务端的文件变化的时候，
+它的 hash码会随之改变，通过请求头中的 If-None-Match 和当前文件的 hash 值进行比较，
+如果相等则表示命中协商缓存。ETag 又有强弱校验之分，如果 hash 码是以 "W/" 开头的一串字符串，
+说明此时协商缓存的校验是弱校验的，只有服务器上的文件差异（根据 ETag 计算方式来决定）达到能够触发 hash 值后缀变化的时候，
+才会真正地请求资源，否则返回 304 并加载浏览器缓存。
+
+## Last-Modified/If-Modified-Since
+Last-Modified/If-Modified-Since 的值代表的是文件的最后修改时间，第一次请求服务端会
+把资源的最后修改时间放到 Last-Modified 响应头中，第二次发起请求的时候，请求头会带上
+上一次响应头中的 Last-Modified 的时间，并放到 If-Modified-Since 请求头属性中，
+服务端根据文件最后一次修改时间和 If-Modified-Since 的值进行比较，如果相等，返回 304 ，并加载浏览器缓存。
+
+本地通过 express 起一个服务来验证协商缓存，代码如下：
+const express = require('express');
+const app = express();
+var options = { 
+  etag: true, // 开启协商缓存
+  lastModified: true, // 开启协商缓存
+  setHeaders: (res, path, stat) => {
+    res.set({
+      'Cache-Control': 'max-age=00', // 浏览器不走强缓存
+      'Pragma': 'no-cache', // 浏览器不走强缓存
+    });
+  },
+};
+app.use(express.static((__dirname + '/public'), options));
+app.listen(3001);
+
+第一次请求资源:
+```
+![Image text](https://github.com/shiqingyun1024/HTTP-summary/blob/main/images/6.webp)
+```
+第二次请求资源，服务端根据请求头中的 If-Modified-Since 和 If-None-Match 验证文件是否修改。
+```
+![Image text](https://github.com/shiqingyun1024/HTTP-summary/blob/main/images/7.webp)
+
 
 ```
 参考文章：
