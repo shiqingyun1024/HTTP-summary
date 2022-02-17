@@ -304,6 +304,44 @@ app.listen(3001);
 ```
 ![Image text](https://github.com/shiqingyun1024/HTTP-summary/blob/main/images/7.webp)
 
+```
+我们再来验证一下 ETag 在强校验的情况下，只增加一行空格，hash 值如何变化，在代码中，
+我采用的是对文件进行 MD5 加密来计算其 hash 值。
+注：只是为了演示用，实际计算不是通过 MD5 加密的，Apache 默认通过 FileEtag 中 FileEtag INode Mtime Size 的配置自动生成 ETag，
+用户可以通过自定义的方式来修改文件生成 ETag 的方式。
+为了保证 lastModified 不影响缓存，我把通过 Last-Modified/If-Modified-Since 请求头删除了，源码如下：
+
+const express = require('express');
+const CryptoJS = require('crypto-js/crypto-js');
+const fs = require('fs');
+const app = express();
+var options = { 
+  etag: true, // 只通过Etag来判断
+  lastModified: false, // 关闭另一种协商缓存
+  setHeaders: (res, path, stat) => {
+    const data = fs.readFileSync(path, 'utf-8'); // 读取文件
+    const hash = CryptoJS.MD5((JSON.stringify(data))); // MD5加密
+    res.set({
+      'Cache-Control': 'max-age=00', // 浏览器不走强缓存
+      'Pragma': 'no-cache', // 浏览器不走强缓存
+      'ETag': hash, // 手动设置Etag值为MD5加密后的hash值
+    });
+  },
+};
+app.use(express.static((__dirname + '/public'), options));
+app.listen(4000); // 使用新端口号，否则上面验证的协商缓存会一直存在
+
+第一次和第二次请求如下：
+```
+![Image text](https://github.com/shiqingyun1024/HTTP-summary/blob/main/images/8.webp)
+
+![Image text](https://github.com/shiqingyun1024/HTTP-summary/blob/main/images/9.webp)
+```
+然后我修改了 test.js ，增加一个空格后再删除一个空格，保持文件内容不变，但文件的修改时间改变，
+发起第三次请求，由于我生成 ETag 的方式是通过对文件内容进行 MD5 加密生成，所以虽然修改时间变化了，
+但请求依然返回了 304 ，读取浏览器缓存。
+```
+![Image text](https://github.com/shiqingyun1024/HTTP-summary/blob/main/images/10.webp)
 
 ```
 参考文章：
