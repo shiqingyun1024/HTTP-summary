@@ -342,7 +342,23 @@ app.listen(4000); // 使用新端口号，否则上面验证的协商缓存会�
 但请求依然返回了 304 ，读取浏览器缓存。
 ```
 ![Image text](https://github.com/shiqingyun1024/HTTP-summary/blob/main/images/10.webp)
+```
+ETag/If-None-Match 的出现主要解决了 Last-Modified/If-Modified-Since 所解决不了的问题：
 
+如果文件的修改频率在秒级以下，Last-Modified/If-Modified-Since 会错误地返回 304
+如果文件被修改了，但是内容没有任何变化的时候，Last-Modified/If-Modified-Since 不会返回 304 ，而是会重新请求
+上面的例子就说明了这个问题
+
+```
+### 总结
+```
+在实际使用场景中，比如政采云的官网。图片、不常变化的 JS 等静态资源都会使用缓存来提高页面的加载速度。
+例如政采云首页的顶部导航栏，埋点 SDK 等等。
+
+在文章的最后，我们再次回到这张流程图，这张图涵盖了 HTTP 缓存的整体流程，大家对整体流程熟悉后，
+也可以自己动手通过 Node 来验证下 HTTP 缓存。
+```
+![Image text](https://github.com/shiqingyun1024/HTTP-summary/blob/main/images/1.webp)
 ```
 参考文章：
 作者：政采云前端团队
